@@ -32,4 +32,4 @@ EOT
 
 #Build the debian package
 fakeroot dpkg-deb --build "debian"
-mv debian.deb u-boot-sunxi.deb
+mv debian.deb u-boot-sunxi-${RELEASE_VERSION}.deb
