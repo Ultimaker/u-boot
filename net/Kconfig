@@ -9,6 +9,7 @@ menuconfig NET
 if NET
 
 config NET_ETHADDR_EEPROM
+	depends on ARCH_SUNXI
 	bool "Get ethaddr from eeprom"
 	help
 	  Selecting this will try to get the Ethernet address from an onboard
