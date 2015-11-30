@@ -7,6 +7,64 @@ menuconfig NET
 
 if NET
 
+config NET_ETHADDR_EEPROM
+	bool "Get ethaddr from eeprom"
+	help
+	  Selecting this will try to get the Ethernet address from an onboard
+	  EEPROM and set into the environment if and only if the environment
+	  does currently not already hold a MAC address. For more information
+	  see doc/README.enetaddr.
+
+config NET_ETHADDR_EEPROM_I2C
+	depends on NET_ETHADDR_EEPROM
+	bool "EEPROM on I2C bus"
+	help
+	  This switch enables checks for an EEPROM on the I2C bus. Naturally
+	  this will only work if there is an actual EEPROM connected on the
+	  I2C bus and the bus and device are properly configured via the
+	  options below.
+
+config NET_ETHADDR_EEPROM_I2C_BUS
+	depends on NET_ETHADDR_EEPROM_I2C
+	int "I2C bus"
+	default 0
+	help
+	  Select the bus on which the EEPROM is present, defaults to bus 0.
+
+config NET_ETHADDR_EEPROM_I2C_ADDR
+	depends on NET_ETHADDR_EEPROM_I2C
+	hex "eeprom address"
+	default 0x50
+	help
+	  Select the address of the eeprom, defaults to address 0x50.
+
+config NET_ETHADDR_EEPROM_I2C_ADDRLEN
+	depends on NET_ETHADDR_EEPROM_I2C
+	int "eeprom address length"
+	default 1
+	help
+	  Number of bytes to be used for the I2C address length. Typically 1,
+	  2 for large memories, 0 for register type devices with only one
+	  register.
+
+config NET_ETHADDR_EEPROM_OFFSET
+	depends on NET_ETHADDR_EEPROM
+	int "EEPROM offset"
+	default 8
+	help
+	  Select the byte offset of the MAC address within the page,
+	  defaults to byte 8.
+
+config NET_ETHADDR_EEPROM_CRC8
+	depends on NET_ETHADDR_EEPROM
+	bool "Check CRC8 of MAC"
+	default y
+	help
+	  Optionally, it is possible to run a CRC-8-CCITT check on the MAC
+	  address. To do so, the MAC address is stored with a CRC8 byte append.
+	  This option enables the CRC check of the MAC address against the CRC
+	  byte.
+
 config NET_RANDOM_ETHADDR
 	bool "Random ethaddr if unset"
 	select LIB_RAND
