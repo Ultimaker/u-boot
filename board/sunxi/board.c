@@ -12,6 +12,7 @@
  */
 
 #include <common.h>
+#include <i2c.h>
 #include <mmc.h>
 #include <axp_pmic.h>
 #include <asm/arch/clock.h>
@@ -26,6 +27,7 @@
 #endif
 #include <asm/gpio.h>
 #include <asm/io.h>
+#include <linux/crc8.h>
 #include <nand.h>
 #include <net.h>
 #include <sy8106a.h>
@@ -594,6 +596,38 @@ static void parse_spl_header(const uint32_t spl_addr)
 }
 #endif
 
+#if defined(CONFIG_NET_ETHADDR_EEPROM) && defined(CONFIG_NET_ETHADDR_EEPROM_I2C)
+static int read_mac_from_eeprom(uint8_t *mac_addr)
+{
+	uint8_t eeprom[7];
+	int old_i2c_bus;
+
+	old_i2c_bus = i2c_get_bus_num();
+	i2c_set_bus_num(CONFIG_NET_ETHADDR_EEPROM_I2C_BUS);
+	if (i2c_read(CONFIG_NET_ETHADDR_EEPROM_I2C_ADDR,
+		     CONFIG_NET_ETHADDR_EEPROM_OFFSET,
+		     CONFIG_NET_ETHADDR_EEPROM_I2C_ADDRLEN,
+		     eeprom, 7)) {
+		i2c_set_bus_num(old_i2c_bus);
+		puts("Could not read the EEPROM; EEPROM missing?\n");
+		return -1;
+	}
+	i2c_set_bus_num(old_i2c_bus);
+#ifdef CONFIG_NET_ETHADDR_EEPROM_CRC8
+	if (crc8(0, eeprom, 6) != eeprom[6]) {
+		puts("CRC error on MAC address from EEPROM.\n");
+		return -1;
+	}
+#endif
+	memcpy(mac_addr, eeprom, 6);
+
+	return 0;
+}
+#else
+static int read_mac_from_eeprom(uint8_t *mac_addr) { return -1; }
+#endif
+
+
 #ifdef CONFIG_MISC_INIT_R
 int misc_init_r(void)
 {
@@ -611,6 +645,9 @@ int misc_init_r(void)
 		parse_spl_header(SPL_ADDR);
 	}
 #endif
+
+	if ((!getenv("ethaddr")) && (!read_mac_from_eeprom(mac_addr)))
+		eth_setenv_enetaddr("ethaddr", mac_addr);
 
 	ret = sunxi_get_sid(sid);
 	if (ret == 0 && sid[0] != 0 && sid[3] != 0) {
