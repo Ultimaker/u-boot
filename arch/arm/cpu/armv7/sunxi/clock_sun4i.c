@@ -67,7 +67,11 @@ int clock_twi_onoff(int port, int state)
 	struct sunxi_ccm_reg *const ccm =
 		(struct sunxi_ccm_reg *)SUNXI_CCM_BASE;
 
+#ifdef CONFIG_MACH_SUN7I
+	if (port > 4)
+#else
 	if (port > 2)
+#endif
 		return -1;
 
 	/* set the apb clock gate for twi */
