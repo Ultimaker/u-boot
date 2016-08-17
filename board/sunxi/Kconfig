@@ -376,12 +376,14 @@ config I2C0_ENABLE
 
 config I2C1_ENABLE
 	bool "Enable I2C/TWI controller 1"
+	default y if (NET_ETHADDR_EEPROM_I2C_BUS = 1)
 	default n
 	---help---
 	See I2C0_ENABLE help text.
 
 config I2C2_ENABLE
 	bool "Enable I2C/TWI controller 2"
+	default y if (NET_ETHADDR_EEPROM_I2C_BUS = 2)
 	default n
 	---help---
 	See I2C0_ENABLE help text.
@@ -389,6 +391,7 @@ config I2C2_ENABLE
 if MACH_SUN6I || MACH_SUN7I
 config I2C3_ENABLE
 	bool "Enable I2C/TWI controller 3"
+	default y if (NET_ETHADDR_EEPROM_I2C_BUS = 3)
 	default n
 	---help---
 	See I2C0_ENABLE help text.
@@ -406,6 +409,7 @@ endif
 if MACH_SUN7I
 config I2C4_ENABLE
 	bool "Enable I2C/TWI controller 4"
+	default y if (NET_ETHADDR_EEPROM_I2C_BUS = 4)
 	default n
 	---help---
 	See I2C0_ENABLE help text.

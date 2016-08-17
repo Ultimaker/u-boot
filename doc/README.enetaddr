@@ -47,6 +47,42 @@ Correct flow of setting up the MAC address (summarized):
 Previous behavior had the MAC address always being programmed into hardware
 in the device's init() function.
 
+--------
+ EEPROM
+--------
+
+When there is an EEPROM available on a board, but the EEPROM is not large enough
+to store the whole environment, it may be desired to store a MAC address in the
+onboard EEPROM. Using CONFIG_NET_ETHADDR_EEPROM enables this feature. Depending
+on the board, the EEPROM may be connected on various methods, but currently,
+only the I2C bus is available via CONFIG_NET_ETHADDR_EEPROM_I2C.
+CONFIG_NET_ETHADDR_EEPROM_I2C_BUS I2C bus on which the eeprom is present and
+CONFIG_NET_ETHADDR_EEPROM_I2C_ADDR set the address of the EEPROM, which
+defaults to the very common 0x50. Small size EEPROM's generally use single byte
+addressing but larger EEPROM's may use double byte addressing, which can be
+configured using CONFIG_NET_ETHADDR_EEPROM_ADDRLEN.
+
+Within the EEPROM, the MAC address can be stored on any arbitrary offset,
+CONFIG_NET_ETHADDR_EEPROM_OFFSET sets this to 8 as a default however, allowing
+the first 8 bytes to be used for some header magic for example.
+
+After the 6 bytes used for the MAC address, there is an 8 byte field to indicate
+the ID of the network interface this MAC address is for. 0xff here means 'for
+the first available interface' and 0x00 means the first network interface, 0x01
+the second, etc. It is up to the platform however to enforce this.
+
+Appending the 6 MAC bytes and the 7th interface byte is a CRC8 byte over the
+previous 7 bytes. Whether to check this CRC8 or not is dependent on
+CONFIG_NET_ETHADDR_EEPROM_CRC8.
+
+Layout example:
+
+00000000  21 4d 61 67 69 63 2e 21  01 23 45 67 89 ab ff c0  |!Magic.!.#Eg....|
+
+where the Header magic (!Magic.!) is spread over the first 8 bytes, and the MAC
+address '01-23-45-67-89-ab' for the first interface (0xff) with the CRC8
+checksum 0xc0.
+
 -------
  Usage
 -------
