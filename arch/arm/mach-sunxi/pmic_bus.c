@@ -95,6 +95,9 @@ int pmic_bus_setbits(u8 reg, u8 bits)
 	if (ret)
 		return ret;
 
+	if (val & bits)
+		return 0;
+
 	val |= bits;
 	return pmic_bus_write(reg, val);
 }
@@ -107,6 +110,9 @@ int pmic_bus_clrbits(u8 reg, u8 bits)
 	ret = pmic_bus_read(reg, &val);
 	if (ret)
 		return ret;
+
+	if (!(val & bits))
+		return 0;
 
 	val &= ~bits;
 	return pmic_bus_write(reg, val);
