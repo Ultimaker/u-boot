@@ -202,6 +202,15 @@ config AXP_ALDO3_VOLT_SLOPE_08
 
 endchoice
 
+config AXP_ALDO3_INRUSH_QUIRK
+	bool "axp pmic (a)ldo3 inrush quirk"
+	depends on AXP209_POWER
+	default n
+	---help---
+	The reference design denotes a value of 4.7 uF for the output capacitor
+	of LDO3. Some boards have to higher capacitance than that which causes
+	an inrush current and causes an AXP209 shutdown.
+
 config AXP_ALDO4_VOLT
 	int "axp pmic (a)ldo4 voltage"
 	depends on AXP209_POWER
