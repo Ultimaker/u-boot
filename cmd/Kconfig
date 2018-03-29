@@ -551,6 +551,13 @@ config CMD_BLOCK_CACHE
 	  during development, but also allows the cache to be disabled when
 	  it might hurt performance (e.g. when using the ums command).
 
+config CMD_BMP
+	bool "bitmap loading support"
+	default n
+	help
+	  Enable the bmp command to display or query bitmap info from images
+	  already loaded to memory.
+
 config CMD_CACHE
 	bool "icache or dcache"
 	help

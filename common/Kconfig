@@ -124,3 +124,50 @@ config CONSOLE_RECORD_IN_SIZE
 	  tstc() and getc() will use this in preference to real device input.
 	  The buffer is allocated immediately after the malloc() region is
 	  ready.
+
+menu "Bootsplash support"
+
+config SPLASH_SCREEN
+	bool "Enable bootsplash support"
+	default n
+	help
+	  If this option is set, the environment is checked for
+	  a variable "splashimage". If found, the usual display
+	  of logo, copyright and system information on the LCD
+	  is suppressed and the BMP image at the address
+	  specified in "splashimage" is loaded instead. The
+	  console is redirected to the "nulldev", too. This
+	  allows for a "silent" boot where a splash screen is
+	  loaded very quickly after power-on.
+
+config SPLASH_SOURCE
+	bool "Enable support for splash_source library"
+	default n
+	help
+	  Allow loading images from board specific image locations enabling
+	  the 'splashsource' environment variable. For more information see
+	  doc/README.splashprepare.
+
+config VIDEO_BMP_RLE8
+	bool "Enable RLE8 support for bitmaps"
+	default n
+	help
+	  Allow loading of bitmaps that are run-length encoded. Note that RLE
+	  only is applicable to bitmaps with 256 colors.
+
+config VIDEO_BMP_GZIP
+	bool "Enable gzip decompression support for bitmaps"
+	default n
+	help
+	  Allow loading of bitmaps that are gzip compressed. U-Boot will
+	  automatically decompress these images on the fly.
+
+config SYS_VIDEO_LOGO_MAX_SIZE
+	int "Maximal size of uncompressed bitmaps"
+	default 8388608
+	help
+	  While decompressing, u-boot needs to know how large the decompressed
+	  image may maximally be, and truncate the image above this size.
+	  Images should thus be within this size (uncompressed).
+
+endmenu
