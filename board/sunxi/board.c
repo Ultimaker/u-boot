@@ -30,7 +30,40 @@
 #include <linux/crc8.h>
 #include <nand.h>
 #include <net.h>
+#include <splash.h>
 #include <sy8106a.h>
+
+#ifdef CONFIG_SPLASH_SOURCE
+static struct splash_location sunxi_splash_locations[] = {
+	{
+		.name = "mmc0",
+		.storage = SPLASH_STORAGE_MMC,
+		.flags = SPLASH_STORAGE_FS,
+		.devpart = "0:1",
+	}, {
+		.name = "mmc1",
+		.storage = SPLASH_STORAGE_MMC,
+		.flags = SPLASH_STORAGE_FS,
+		.devpart = "1:1",
+	}, {
+		.name = "usb0",
+		.storage = SPLASH_STORAGE_USB,
+		.flags = SPLASH_STORAGE_FS,
+		.devpart = "0:1",
+	}, {
+		.name = "scsi0",
+		.storage = SPLASH_STORAGE_SATA,
+		.flags = SPLASH_STORAGE_FS,
+		.devpart = "0:1",
+	},
+};
+
+int splash_screen_prepare(void)
+{
+	return splash_source_load(sunxi_splash_locations,
+				  ARRAY_SIZE(sunxi_splash_locations));
+}
+#endif
 
 #if defined CONFIG_VIDEO_LCD_PANEL_I2C && !(defined CONFIG_SPL_BUILD)
 /* So that we can use pin names in Kconfig and sunxi_name_to_gpio() */
