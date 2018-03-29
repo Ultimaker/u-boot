@@ -840,7 +840,7 @@ int console_init_r(void)
 	 */
 	if (getenv("splashimage") != NULL) {
 		if (!(gd->flags & GD_FLG_SILENT))
-			outputdev = search_device (DEV_FLAGS_OUTPUT, "serial");
+			outputdev = search_device(DEV_FLAGS_OUTPUT, "serial");
 	}
 #endif
 
@@ -854,7 +854,7 @@ int console_init_r(void)
 		if ((dev->flags & DEV_FLAGS_OUTPUT) && (outputdev == NULL)) {
 			outputdev = dev;
 		}
-		if(inputdev && outputdev)
+		if (inputdev && outputdev)
 			break;
 	}
 
