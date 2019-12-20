@@ -95,7 +95,7 @@ int pmic_bus_setbits(u8 reg, u8 bits)
 	if (ret)
 		return ret;
 
-	if (val & bits)
+	if ((val & bits) == bits)
 		return 0;
 
 	val |= bits;
